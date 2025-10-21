@@ -1,0 +1,35 @@
+build-and-push-docker-image:
+  needs: test-backend                     # runs only if tests passed
+  runs-on: ubuntu-24.04
+
+  steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    # Step 1: Login to Docker Hub using secured secrets
+    - name: Log in to Docker Hub
+      run: echo "${{ secrets.SECRET_TOKEN }}" | docker login -u "${{ secrets.SECRET_NAME }}" --password-stdin
+
+    # Step 2: Build and push the backend image
+    - name: Build image and push backend
+      uses: docker/build-push-action@v6
+      with:
+        context: ./backend
+        push: true
+        tags: ${{ secrets.SECRET_NAME }}/tp-devops-simple-api-backend:latest
+
+    # Step 3: Build and push the database image
+    - name: Build image and push database
+      uses: docker/build-push-action@v6
+      with:
+        context: ./initdb
+        push: true
+        tags: ${{ secrets.SECRET_NAME }}/tp-devops-simple-api-database:latest
+
+    # Step 4: Build and push the httpd image
+    - name: Build image and push httpd
+      uses: docker/build-push-action@v6
+      with:
+        context: ./httpd
+        push: true
+        tags: ${{ secrets.SECRET_NAME }}/tp-devops-simple-api-httpd:latest
