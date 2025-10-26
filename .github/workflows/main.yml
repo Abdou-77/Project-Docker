@@ -40,12 +40,28 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      # Prepare Docker username for tagging (prefer DOCKERHUB_USERNAME)
+      - name: Prepare Docker username
+        run: |
+          echo "Preparing Docker username"
+          if [ -n "${{ secrets.DOCKERHUB_USERNAME }}" ]; then
+            echo "DOCKER_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}" >> $GITHUB_ENV
+            echo "Using DOCKERHUB_USERNAME secret"
+          elif [ -n "${{ secrets.SECRET_EMAIL }}" ] && ! echo "${{ secrets.SECRET_EMAIL }}" | grep -q '@'; then
+            echo "DOCKER_USERNAME=${{ secrets.SECRET_EMAIL }}" >> $GITHUB_ENV
+            echo "Using SECRET_EMAIL as Docker username (no @ present)"
+          else
+            echo "ERROR: Set repository secret DOCKERHUB_USERNAME (preferred). If you must use SECRET_EMAIL, ensure it contains a Docker username (no '@')."
+            exit 1
+          fi
+        shell: bash
+
       # Validate that required secrets exist before attempting login
       - name: Validate Docker credentials
         run: |
           echo "Validating Docker credentials"
-          if [ -z "${{ secrets.SECRET_EMAIL }}" ]; then
-            echo "ERROR: Repository secret SECRET_EMAIL is not set. Add it in Settings > Secrets and variables > Actions"
+          if [ -z "${{ secrets.SECRET_EMAIL }}" ] && [ -z "${{ secrets.DOCKERHUB_USERNAME }}" ]; then
+            echo "ERROR: Repository secret SECRET_EMAIL or DOCKERHUB_USERNAME is not set. Add one in Settings > Secrets and variables > Actions"
             exit 1
           fi
           if [ -z "${{ secrets.SECRET_TOKEN }}" ] && [ -z "${{ secrets.SECRET_PASSWORD }}" ]; then
@@ -56,19 +72,21 @@ jobs:
         shell: bash
 
       # Debug step — n'affiche pas les valeurs sensibles, seulement la présence
-      - name: Debug: check secrets presence
+      - name: Debug - check secrets presence
         run: |
+          echo "DOCKERHUB_USERNAME: $( [ -n "${{ secrets.DOCKERHUB_USERNAME }}" ] && echo present || echo missing )"
           echo "SECRET_EMAIL: $( [ -n "${{ secrets.SECRET_EMAIL }}" ] && echo present || echo missing )"
           echo "SECRET_TOKEN: $( [ -n "${{ secrets.SECRET_TOKEN }}" ] && echo present || echo missing )"
           echo "SECRET_PASSWORD: $( [ -n "${{ secrets.SECRET_PASSWORD }}" ] && echo present || echo missing )"
+          echo "DOCKER_USERNAME (env): $( [ -n "$DOCKER_USERNAME" ] && echo present || echo missing )"
         shell: bash
 
       # Connexion sécurisée à Docker Hub (ou ECR si détecté)
       - name: Log in to Docker registry
         uses: docker/login-action@v2
         with:
-          # Use SECRET_TOKEN if present, otherwise fallback to SECRET_PASSWORD
-          username: ${{ secrets.SECRET_EMAIL }}
+          # Use DOCKERHUB_USERNAME if present, otherwise fallback to SECRET_EMAIL
+          username: ${{ secrets.DOCKERHUB_USERNAME || secrets.SECRET_EMAIL }}
           password: ${{ secrets.SECRET_TOKEN || secrets.SECRET_PASSWORD }}
           ecr: auto
           logout: true
@@ -79,7 +97,7 @@ jobs:
         with:
           context: ./backend
           push: true
-          tags: ${{ secrets.SECRET_EMAIL }}/tp-devops-simple-api-backend:latest
+          tags: ${{ env.DOCKER_USERNAME }}/tp-devops-simple-api-backend:latest
 
       # Build et push de l’image base de données
       - name: Build image and push database
@@ -87,7 +105,7 @@ jobs:
         with:
           context: ./initdb
           push: true
-          tags: ${{ secrets.SECRET_EMAIL }}/tp-devops-simple-api-database:latest
+          tags: ${{ env.DOCKER_USERNAME }}/tp-devops-simple-api-database:latest
 
       # Build et push de l’image httpd
       - name: Build image and push httpd
@@ -95,4 +113,4 @@ jobs:
         with:
           context: ./httpd
           push: true
-          tags: ${{ secrets.SECRET_EMAIL }}/tp-devops-simple-api-httpd:latest
+          tags: ${{ env.DOCKER_USERNAME }}/tp-devops-simple-api-httpd:latest
