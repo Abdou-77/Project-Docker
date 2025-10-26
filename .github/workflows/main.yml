@@ -47,9 +47,15 @@ jobs:
           if [ -n "${{ secrets.DOCKERHUB_USERNAME }}" ]; then
             echo "DOCKER_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}" >> $GITHUB_ENV
             echo "Using DOCKERHUB_USERNAME secret"
-          elif [ -n "${{ secrets.SECRET_EMAIL }}" ] && ! echo "${{ secrets.SECRET_EMAIL }}" | grep -q '@'; then
-            echo "DOCKER_USERNAME=${{ secrets.SECRET_EMAIL }}" >> $GITHUB_ENV
-            echo "Using SECRET_EMAIL as Docker username (no @ present)"
+          elif [ -n "${{ secrets.SECRET_EMAIL }}" ]; then
+            # Check if SECRET_EMAIL contains an '@' (invalid for Docker username/tag)
+            if echo "${{ secrets.SECRET_EMAIL }}" | grep -q '@'; then
+              echo "ERROR: SECRET_EMAIL contains '@' — please set DOCKERHUB_USERNAME instead."
+              exit 1
+            else
+              echo "DOCKER_USERNAME=${{ secrets.SECRET_EMAIL }}" >> $GITHUB_ENV
+              echo "Using SECRET_EMAIL as Docker username (no @ present)"
+            fi
           else
             echo "ERROR: Set repository secret DOCKERHUB_USERNAME (preferred). If you must use SECRET_EMAIL, ensure it contains a Docker username (no '@')."
             exit 1
