@@ -1,4 +1,4 @@
-# Workflow CI : build et tests automatiques du backend
+# Workflow CI : build et tests automatiques du backend et déploiement des images Docker
 
 name: CI devops 2025
 
@@ -9,6 +9,9 @@ on:
     branches: [ main, develop ]     # Exécution sur pull request vers main ou develop
 
 jobs:
+  # -------------------------------------------------
+  # Étape 1 : Test du backend Java avec Maven
+  # -------------------------------------------------
   test-backend:
     runs-on: ubuntu-24.04           # Machine virtuelle Ubuntu
 
@@ -24,3 +27,43 @@ jobs:
       - name: Build and test with Maven
         run: mvn clean verify        # Compile et lance les tests
         working-directory: backend   # Le pom.xml est dans le dossier backend
+
+
+  # -------------------------------------------------
+  # Étape 2 : Build et push des images Docker
+  # -------------------------------------------------
+  build-and-push-docker-image:
+    needs: test-backend              # S’exécute uniquement si les tests passent
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Connexion sécurisée à Docker Hub
+      - name: Log in to Docker Hub
+        run: echo "${{ secrets.SECRET_TOKEN }}" | docker login -u "${{ secrets.SECRET_NAME }}" --password-stdin
+
+      # Build et push de l’image backend
+      - name: Build image and push backend
+        uses: docker/build-push-action@v6
+        with:
+          context: ./backend
+          push: true
+          tags: ${{ secrets.SECRET_NAME }}/tp-devops-simple-api-backend:latest
+
+      # Build et push de l’image base de données
+      - name: Build image and push database
+        uses: docker/build-push-action@v6
+        with:
+          context: ./initdb
+          push: true
+          tags: ${{ secrets.SECRET_NAME }}/tp-devops-simple-api-database:latest
+
+      # Build et push de l’image httpd
+      - name: Build image and push httpd
+        uses: docker/build-push-action@v6
+        with:
+          context: ./httpd
+          push: true
+          tags: ${{ secrets.SECRET_NAME }}/tp-devops-simple-api-httpd:latest
