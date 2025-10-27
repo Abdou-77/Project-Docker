@@ -1,0 +1,200 @@
+
+œfr.takima.training.simpleapi.controller.StudentController#addStudent(Lfr/takima/training/simpleapi/entity/Student;)Lorg/springframework/http/ResponseEntity;
+w/Users/abdallahsofi/Project-Docker/backend/src/main/java/fr/takima/training/simpleapi/controller/StudentController.java'" '(,"startingBlock*¶
+2* *(B¡
+ž
+* *(B;
+savedStudent+fr.takima.training.simpleapi.entity.Student"__id*O
+
+__unknown_file (3
+1
+%1+fr.takima.training.simpleapi.entity.Student*
+1*É
+
+startingBlock', '(J
+
+
+__unknown_file (
+%11"__id*d
+
+__unknown_file (H*F
+6
+student+fr.takima.training.simpleapi.entity.Student"
+
+department
+Œ
+
+__unknown_file (
+%12"__id*c
+
+__unknown_file (G*E
+6
+student+fr.takima.training.simpleapi.entity.Student"
+	firstnameŽ
+‹
+
+__unknown_file (
+%13"__id*b
+
+__unknown_file (F*D
+6
+student+fr.takima.training.simpleapi.entity.Student"
+
+lastnameš
+—
+'- '(9
+%14"
+__annotate*S
+
+__unknown_file (75
+3org.springframework.web.bind.annotation.RequestBody*#
+
+__unknown_file (
+
+%12‡
+„
+'B '(IE
+6
+student+fr.takima.training.simpleapi.entity.Student"
+	firstname"__annotation*#
+
+__unknown_file (
+
+%14š
+—
+'- '(9
+%15"
+__annotate*S
+
+__unknown_file (75
+3org.springframework.web.bind.annotation.RequestBody*#
+
+__unknown_file (
+
+%11ˆ
+…
+'B '(IF
+6
+student+fr.takima.training.simpleapi.entity.Student"
+
+department"__annotation*#
+
+__unknown_file (
+
+%15š
+—
+'- '(9
+%16"
+__annotate*S
+
+__unknown_file (75
+3org.springframework.web.bind.annotation.RequestBody*#
+
+__unknown_file (
+
+%13†
+ƒ
+'B '(ID
+6
+student+fr.takima.training.simpleapi.entity.Student"
+
+lastname"__annotation*#
+
+__unknown_file (
+
+%16*
+7*œ
+6* *(½
+º
+* *(.9
+%03fr.takima.training.simpleapi.service.StudentService"__id*m
+
+__unknown_file (Q*O;
+9fr.takima.training.simpleapi.controller.StudentController"
+studentServiceÇÄ
+* *(B1
+%1+fr.takima.training.simpleapi.entity.Student"šfr.takima.training.simpleapi.service.StudentService#addStudent(Lfr/takima/training/simpleapi/entity/Student;)Lfr/takima/training/simpleapi/entity/Student;*W
+
+__unknown_file (;
+9
+%03fr.takima.training.simpleapi.service.StudentService*T
+
+__unknown_file (8
+6
+student+fr.takima.training.simpleapi.entity.Student29addStudent(Lfr/takima/training/simpleapi/entity/Student;)*
+2*‡
+7( ((s
+q
+( ((;
+savedStudent+fr.takima.training.simpleapi.entity.Student"__id*"
+
+__unknown_file (
+""*
+6*Î
+1/ /(2Ý
+Ú
+/ /(GI
+%4Corg.springframework.web.servlet.support.ServletUriComponentsBuilder"org.springframework.web.servlet.support.ServletUriComponentsBuilder#fromCurrentRequest()Lorg/springframework/web/servlet/support/ServletUriComponentsBuilder;*c
+
+__unknown_file (G"E
+Corg.springframework.web.servlet.support.ServletUriComponentsBuilderïì
+/ /(U7
+%51org.springframework.web.util.UriComponentsBuilder"}org.springframework.web.util.UriComponentsBuilder#path(Ljava/lang/String;)Lorg/springframework/web/util/UriComponentsBuilder;*g
+
+__unknown_file (K
+I
+%4Corg.springframework.web.servlet.support.ServletUriComponentsBuilder*%
+
+__unknown_file (	
+/{id}2path(Ljava/lang/String;)ÌÉ
+0  0(4
+%6java.lang.Long"Cfr.takima.training.simpleapi.entity.Student#getId()Ljava/lang/Long;*Y
+
+__unknown_file (=
+;
+savedStudent+fr.takima.training.simpleapi.entity.Student2getId()óð
+/ 0(50
+%7*org.springframework.web.util.UriComponents"org.springframework.web.util.UriComponentsBuilder#buildAndExpand([Ljava/lang/Object;)Lorg/springframework/web/util/UriComponents;*U
+
+__unknown_file (9
+7
+%51org.springframework.web.util.UriComponentsBuilder*2
+
+__unknown_file (
+
+%6java.lang.Long2#buildAndExpand([Ljava/lang/Object;)¼¹
+/ 0(=
+%8java.net.URI"@org.springframework.web.util.UriComponents#toUri()Ljava/net/URI;*N
+
+__unknown_file (2
+0
+%7*org.springframework.web.util.UriComponents2toUri()^
+\
+/ 0(>
+locationjava.net.URI"__id*0
+
+__unknown_file (
+
+%8java.net.URI¿
+¼
+1 1(/9
+%93org.springframework.http.ResponseEntity$BodyBuilder"torg.springframework.http.ResponseEntity#created(Ljava/net/URI;)Lorg/springframework/http/ResponseEntity$BodyBuilder;*G
+
+__unknown_file (+")
+'org.springframework.http.ResponseEntity*6
+
+__unknown_file (
+
+locationjava.net.URIˆ…
+1 1(7.
+%10'org.springframework.http.ResponseEntity"gorg.springframework.http.ResponseEntity$HeadersBuilder#build()Lorg/springframework/http/ResponseEntity;*W
+
+__unknown_file (;
+9
+%93org.springframework.http.ResponseEntity$BodyBuilder2build()"<
+1 1(80
+.
+%10'org.springframework.http.ResponseEntity:B
+'- '(I6
+student+fr.takima.training.simpleapi.entity.StudentB=;
+9fr.takima.training.simpleapi.controller.StudentControllerH
