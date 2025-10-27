@@ -10,7 +10,7 @@ on:
 
 jobs:
   # -------------------------------------------------
-  # Étape 1 : Test du backend Java avec Maven
+  # Étape 1 : Test du backend Java avec Maven + SonarCloud
   # -------------------------------------------------
   test-backend:
     runs-on: ubuntu-24.04           # Machine virtuelle Ubuntu
@@ -28,10 +28,16 @@ jobs:
         run: mvn clean verify        # Compile et lance les tests
         working-directory: backend   # Le pom.xml est dans le dossier backend
 
-      # SonarCloud analysis (skips if required secrets are not set)
-      - name: Run SonarCloud analysis if configured
+      # ✅ SonarCloud analysis (corrected)
+      - name: Run SonarCloud analysis
         working-directory: backend
-        run: mvn -B sonar:sonar -Dsonar.projectKey=${{ secrets.SONAR_TOKEN }} -Dsonar.organization=ansible-course -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+        run: |
+          mvn -B verify sonar:sonar \
+            -Dsonar.projectKey=ansible-course_simple-api \
+            -Dsonar.organization=ansible-course \
+            -Dsonar.host.url=https://sonarcloud.io \
+            -Dsonar.login=${{ secrets.SONAR_TOKEN }} \
+            -Dsonar.branch.name=main
         shell: bash
 
 
