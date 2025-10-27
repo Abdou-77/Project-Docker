@@ -128,10 +128,39 @@ jobs:
       - name: Setup SSH key
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          # Ajouter l'hôte aux known_hosts
+          # Écrire la clé privée au chemin attendu par l'inventory
+          printf "%s\n" "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/abdellah_takima
+          chmod 600 ~/.ssh/abdellah_takima
+          # Pour compatibilité avec d'autres scripts, créer un lien id_rsa
+          ln -sf ~/.ssh/abdellah_takima ~/.ssh/id_rsa
+          # Démarrer ssh-agent et ajouter la clé
+          eval "$(ssh-agent -s)"
+          ssh-add ~/.ssh/abdellah_takima || true
+          # Ajouter l'hôte distant aux known_hosts pour éviter les prompts
           ssh-keyscan -H ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts 2>/dev/null || true
+
+      - name: Validate SSH key file
+        run: |
+          echo "Checking ~/.ssh contents:"
+          ls -la ~/.ssh || true
+          if [ ! -f ~/.ssh/abdellah_takima ]; then
+            echo "ERROR: SSH key file not found at ~/.ssh/abdellah_takima"
+            exit 1
+          fi
+          echo "Key file permissions:"
+          stat -c '%a %n' ~/.ssh/abdellah_takima || true
+          # Check the header of the key without printing the whole key
+          head -n 1 ~/.ssh/abdellah_takima | grep -E 'PRIVATE KEY|OPENSSH' || { echo "ERROR: key does not look like a private key"; exit 1; }
+
+      - name: Test SSH connectivity (quick)
+        env:
+          SSH_KEY: ~/.ssh/abdellah_takima
+        run: |
+          echo "Testing SSH connectivity to ${{ secrets.SERVER_HOST }} as ${{ secrets.SERVER_USER }}"
+          # Try a single non-interactive SSH command (BatchMode) so it fails fast on auth error
+          ssh -i $SSH_KEY -o BatchMode=yes -o StrictHostKeyChecking=no -o ConnectTimeout=10 \
+            ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} 'echo SSH_OK' || {
+            echo "ERROR: SSH connection failed - check SSH_PRIVATE_KEY, SERVER_USER, SERVER_HOST, and that the public key is in ~/.ssh/authorized_keys on the server"; exit 1; }
 
       - name: Install Ansible
         run: |
@@ -144,7 +173,8 @@ jobs:
         run: |
           cd ansible
           ansible-playbook -i inventories/setup.yml playbook.yml \
-            -e "ansible_user=${{ secrets.SERVER_USER }}"
+            -e "ansible_user=${{ secrets.SERVER_USER }}" \
+            --private-key ~/.ssh/abdellah_takima
 
       - name: Verify deployment
         run: |
@@ -167,4 +197,7 @@ jobs:
 
       - name: Cleanup SSH key
         if: always()
-        run: rm -f ~/.ssh/id_rsa
+        run: |
+          # Retirer la clé ajoutée et nettoyer le dossier
+          ssh-add -D || true
+          rm -f ~/.ssh/abdellah_takima ~/.ssh/id_rsa
