@@ -31,13 +31,9 @@ jobs:
       # SonarCloud analysis (skips if required secrets are not set)
       - name: Run SonarCloud analysis if configured
         working-directory: backend
-        run: mvn -B sonar:sonar -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }} -Dsonar.organization=ansible-course -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+        run: mvn -B sonar:sonar -Dsonar.projectKey=${{ secrets.SONAR_TOKEN }} -Dsonar.organization=ansible-course -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=${{ secrets.SONAR_TOKEN }}
         shell: bash
 
-      - name: Skip SonarCloud analysis if secrets missing
-        if: ${{ secrets.SONAR_TOKEN == '' || secrets.SONAR_PROJECT_KEY == '' }}
-        run: echo "Skipping SonarCloud analysis because SONAR_TOKEN or SONAR_PROJECT_KEY is not set."
-        shell: bash
 
 
   # -------------------------------------------------
