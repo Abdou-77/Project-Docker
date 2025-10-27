@@ -1,21 +1,0 @@
-
-Wfr.takima.training.simpleapi.service.DepartmentService#getDepartments()Ljava/util/List;~
-t/Users/abdallahsofi/Project-Docker/backend/src/main/java/fr/takima/training/simpleapi/service/DepartmentService.java (*"1*¿
-1 (´
-±
- (!4
-%0.fr.takima.training.simpleapi.dao.DepartmentDAO"__id*i
-
-__unknown_file (M*K8
-6fr.takima.training.simpleapi.service.DepartmentService"
-departmentDAOÔÑ
- (+
-%1java.util.List"Porg.springframework.data.repository.ListCrudRepository#findAll()Ljava/util/List;*R
-
-__unknown_file (6
-4
-%0.fr.takima.training.simpleapi.dao.DepartmentDAO2	findAll()""
- (,
-
-%1java.util.ListB:8
-6fr.takima.training.simpleapi.service.DepartmentServiceH

@@ -113,3 +113,53 @@ jobs:
           context: ./httpd
           push: true
           tags: ${{ env.DOCKER_USERNAME }}/tp-devops-simple-api-httpd:latest
+
+  # 🚀 Nouveau job : Déploiement continu sur le serveur cloud
+  deploy-to-production:
+    needs: build-and-push-docker-image
+    runs-on: ubuntu-24.04
+    # Déployer uniquement sur la branche main (pas sur les PRs ni develop)
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Install Ansible
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ansible
+
+      - name: Deploy with Ansible
+        env:
+          ANSIBLE_HOST_KEY_CHECKING: 'False'
+        run: |
+          cd ansible
+          ansible-playbook -i inventories/setup.yml playbook.yml \
+            --private-key ~/.ssh/deploy_key \
+            -e "ansible_user=${{ secrets.SERVER_USER }}"
+
+      - name: Verify deployment
+        run: |
+          echo "🔍 Verification du déploiement..."
+          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no \
+            ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} \
+            'docker ps --format "table {{.Names}}\t{{.Status}}"'
+
+      - name: Health check
+        run: |
+          echo "🏥 Test de santé de l'API..."
+          sleep 30  # Attendre que les services démarrent
+          curl -f http://${{ secrets.SERVER_HOST }}:8080/actuator/health || exit 1
+          echo "✅ Application déployée et fonctionnelle !"
+
+      - name: Cleanup SSH key
+        if: always()
+        run: rm -f ~/.ssh/deploy_key

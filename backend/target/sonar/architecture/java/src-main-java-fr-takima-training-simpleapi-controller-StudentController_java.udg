@@ -1,858 +1,0 @@
-
-1.0ansible-course_ansible-courseJavaFrontend"1761558461302*java2.Bì"
-Q
-Lsrc/main/java/fr/takima/training/simpleapi/controller/StudentController.java2
-	
-type3
-	
-MAIN4
-
-
-module-key5
-"
-ansible-course_ansible-course6
-
-package8
-J
-Eansible-course_ansible-course:fr.takima.training.simpleapi.controller9
-?
-9fr.takima.training.simpleapi.controller.StudentController11
-
-class12
-
-access13
-
-public14
-
-simple-name15
-
-StudentController16
-<
-6org.springframework.web.bind.annotation.RestController18
-
-unknown19
-
-annotated by20
-
-
-uses21
-9
-3org.springframework.web.bind.annotation.CrossOrigin23
-<
-6org.springframework.web.bind.annotation.RequestMapping25
-N
-Hfr.takima.training.simpleapi.controller.StudentController.studentService27
-
-field28
-
-private29
-
-studentService30
-9
-3fr.takima.training.simpleapi.service.StudentService32
-
-is type33
-~
-xfr.takima.training.simpleapi.controller.StudentController#<init>(Lfr/takima/training/simpleapi/service/StudentService;)V35
-
-method36
-
-	has param37
-<
-6org.springframework.beans.factory.annotation.Autowired39
-
-calls40
-
-
-references41
-v
-pfr.takima.training.simpleapi.controller.StudentController#getStudents()Lorg/springframework/http/ResponseEntity;43
-
-getStudents44
--
-'org.springframework.http.ResponseEntity46
-
-returns47
-8
-2org.springframework.web.bind.annotation.GetMapping49
-m
-gorg.springframework.http.ResponseEntity#ok(Ljava/lang/Object;)Lorg/springframework/http/ResponseEntity;51
-R
-Lfr.takima.training.simpleapi.service.StudentService#getAll()Ljava/util/List;53
-z
-tfr.takima.training.simpleapi.controller.StudentController#getStudentById(J)Lorg/springframework/http/ResponseEntity;55
-
-getStudentById56
-:
-4org.springframework.web.bind.annotation.PathVariable58
-1
-+fr.takima.training.simpleapi.entity.Student60
-x
-rfr.takima.training.simpleapi.service.StudentService#getStudentById(J)Lfr/takima/training/simpleapi/entity/Student;62
-<
-6org.springframework.http.ResponseEntity$HeadersBuilder64
-m
-gorg.springframework.http.ResponseEntity$HeadersBuilder#build()Lorg/springframework/http/ResponseEntity;66
-p
-jorg.springframework.http.ResponseEntity#notFound()Lorg/springframework/http/ResponseEntity$HeadersBuilder;68
-£
-œfr.takima.training.simpleapi.controller.StudentController#addStudent(Lfr/takima/training/simpleapi/entity/Student;)Lorg/springframework/http/ResponseEntity;70
-
-
-addStudent71
-9
-3org.springframework.web.bind.annotation.PostMapping73
-9
-3org.springframework.web.bind.annotation.RequestBody75
-¡
-šfr.takima.training.simpleapi.service.StudentService#addStudent(Lfr/takima/training/simpleapi/entity/Student;)Lfr/takima/training/simpleapi/entity/Student;77
-9
-3org.springframework.http.ResponseEntity$BodyBuilder79
-o
-iorg.springframework.http.ResponseEntity#badRequest()Lorg/springframework/http/ResponseEntity$BodyBuilder;81
-0
-*org.springframework.web.util.UriComponents83
-F
-@org.springframework.web.util.UriComponents#toUri()Ljava/net/URI;85
-7
-1org.springframework.web.util.UriComponentsBuilder87
-ˆ
-org.springframework.web.util.UriComponentsBuilder#buildAndExpand([Ljava/lang/Object;)Lorg/springframework/web/util/UriComponents;89
-ƒ
-}org.springframework.web.util.UriComponentsBuilder#path(Ljava/lang/String;)Lorg/springframework/web/util/UriComponentsBuilder;91
-I
-Corg.springframework.web.servlet.support.ServletUriComponentsBuilder93
-¤
-org.springframework.web.servlet.support.ServletUriComponentsBuilder#fromCurrentRequest()Lorg/springframework/web/servlet/support/ServletUriComponentsBuilder;95
-I
-Cfr.takima.training.simpleapi.entity.Student#getId()Ljava/lang/Long;97
-z
-torg.springframework.http.ResponseEntity#created(Ljava/net/URI;)Lorg/springframework/http/ResponseEntity$BodyBuilder;99
-¨
- fr.takima.training.simpleapi.controller.StudentController#updateStudent(Lfr/takima/training/simpleapi/entity/Student;J)Lorg/springframework/http/ResponseEntity;101
-
-updateStudent102
-9
-2org.springframework.web.bind.annotation.PutMapping104
-K
-Dfr.takima.training.simpleapi.entity.Student#setId(Ljava/lang/Long;)V106
-z
-sfr.takima.training.simpleapi.controller.StudentController#removeStudent(J)Lorg/springframework/http/ResponseEntity;108
-
-removeStudent109
-<
-5org.springframework.web.bind.annotation.DeleteMapping111
-P
-Ifr.takima.training.simpleapi.service.StudentService#removeStudentById(J)V113
-h
-aorg.springframework.http.ResponseEntity#ok()Lorg/springframework/http/ResponseEntity$BodyBuilder;115J#
-!
-1
-12
-
-3
-4
-
-5
-6Z
-
-7
-7982
-
-
-5
-6jÛ	
-B
-54<
-545536 *
-1 (210:7B
-
-
-13
-14
-
-
-15
-56
-
-57
-575819
-
-86
-868719
-
-24
-242519
-
-38
-383919
-
-65
-656619
-B
-42<
-424336 *
-1 (210:7B
-
-
-13
-14
-
-
-15
-44
-
-105
-10510619
-
-78
-787919
-
-98
-989919
-F
-100?
-10010136 *
-14 4(210:7B
-
-
-13
-14
-
-15
-102
-
-22
-222319
-
-74
-747519
-
-88
-888919
-
-50
-505119
-
-61
-616219
-
-103
-10310419
-B
-34<
-343536 *
-1 (210:7B
-
-
-13
-14
-
-
-15
-16
-
-59
-596019
-
-48
-484919
-
-67
-676819
-
-84
-848519
-
-112
-11211319
->
-108
-101112 *
-1 (:7B
-
-
-13
-14
-
-
-15
-16
-F
-107?
-10710836 *
-1@ @(210:7B
-
-
-13
-14
-
-15
-109
-
-110
-11011119
-
-52
-525319
-
-72
-727319
-
-114
-11411519
-
-92
-929319
-
-31
-313219
-B
-69<
-697036 *
-1& &(210:7B
-
-
-13
-14
-
-
-15
-71
-
-17
-171819
-
-76
-767719
-B
-26<
-262728 *
-1 (210:7B
-
-
-13
-29
-
-
-15
-30
-
-90
-909119
-
-94
-949519
-
-45
-454619
-
-63
-636419
-
-96
-969719
-
-80
-808119
-
-82
-828319rÌ#
-
-101720*
-1 (
-
-101721*
-1 (
-
-102220*
-1 (
-
-102221*
-1 (
-
-102420*
-1 (
-
-102421*
-1 (
-
-263133*
-1 (!
-
-263121*
-1 (!
-
-263121*
-1" (0
-
-343137*
-1 (,
-
-343820*
-1 (
-
-343821*
-1 (
-
-341040*
-1 (
-
-343133*
-1- (;
-
-343121*
-1 (,
-
-341021*
-1	 (
-
-341041*
-1	 (
-
-343121*
-1 (
-
-342641*
-1 (
-
-424547*
-1 (
-
-424820*
-1 (
-
-424821*
-1 (
-
-424521*
-1 (
-
-424547*
-1 (
-
-424541*
-1 (
-
-425040*
-1  ("
-
-423141*
-1# (1
-
-425240*
-12 (8
-
-422641*
-1# (1
-
-423121*
-1# (1
-
-422641*
-1# (1
-
-544547*
-1 (
-
-544820*
-1 (
-
-544821*
-1 (
-
-544521*
-1 (
-
-545720*
-12 (3
-
-545721*
-13 (?
-
-545921*
-1 (
-
-545947*
-1A (E
-
-543141*
-1A (E
-
-546140*
-1U (c
-
-541021*
-1A (E
-
-541041*
-1A (E
-
-543121*
-1F (T
-
-542641*
-1F (T
-
-544547*
-1! !("
-
-546341*
-1! !("
-
-546540*
-1!. !(3
-
-546347*
-1! !("
-
-544541*
-1! !("
-
-546740*
-1!# !(+
-
-544547*
-1# #(
-
-544541*
-1# #(
-
-545040*
-1#  #("
-
-545947*
-1## #(2
-
-694547*
-1' '(
-
-695937*
-1'; '(B
-
-697220*
-1& &(
-
-697221*
-1& &(
-
-694521*
-1' '(
-
-695933*
-1'C '(J
-
-697420*
-1'. '(/
-
-697421*
-1'/ '(:
-
-695921*
-1'; '(B
-
-695933*
-1( ((
-
-695921*
-1(	 ((
-
-695947*
-1* *( 
-
-693141*
-1* *( 
-
-697640*
-1*0 *(:
-
-691021*
-1* *( 
-
-691041*
-1* *( 
-
-693121*
-1*! *(/
-
-692641*
-1*! *(/
-
-694547*
-1, ,("
-
-696341*
-1, ,("
-
-696540*
-1,0 ,(5
-
-697847*
-1, ,("
-
-694541*
-1, ,("
-
-698040*
-1,# ,(-
-
-698241*
-1/ /(3
-
-698440*
-107 0(<
-
-698247*
-1/ /(3
-
-698641*
-1/ /(3
-
-698840*
-10 0( 
-
-698647*
-1/ /(3
-
-698641*
-1/ /(3
-
-699040*
-1/I /(M
-
-699247*
-1/ /(3
-
-699241*
-1/ /(3
-
-699440*
-1/4 /(F
-
-699221*
-1/ /(3
-
-695941*
-10! 0(-
-
-699640*
-10. 0(3
-
-694547*
-11 1(
-
-696341*
-11 1(
-
-696540*
-111 1(6
-
-697847*
-11 1(
-
-694541*
-11 1(
-
-699840*
-11 1(&
-
-1004547*
-15 5(
-
-1005937*
-15> 5(E
-
-10010320*
-14 4(
-
-10010321*
-14 4(
-
-1004521*
-15 5(
-
-1005933*
-15F 5(M
-
-1007420*
-151 5(2
-
-1007421*
-152 5(=
-
-1005921*
-15> 5(E
-
-1005720*
-15O 5(P
-
-1005721*
-15P 5(\
-
-1005921*
-16 6(
-
-1005947*
-16A 6(O
-
-1003141*
-16A 6(O
-
-1006140*
-16P 6(^
-
-1002641*
-16A 6(O
-
-1003121*
-16A 6(O
-
-1002641*
-16A 6(O
-
-1004547*
-18 8("
-
-1006341*
-18 8("
-
-1006540*
-18. 8(3
-
-1006347*
-18 8("
-
-1004541*
-18 8("
-
-1006740*
-18# 8(+
-
-1005941*
-1;	 ;(
-
-10010540*
-1; ;(
-
-1005947*
-1<	 <(
-
-1003141*
-1<	 <(
-
-1007640*
-1< <('
-
-1001021*
-1<	 <(
-
-1001041*
-1<	 <(
-
-1003121*
-1< <(
-
-1002641*
-1< <(
-
-1004547*
-1= =(
-
-1004541*
-1= =(
-
-1005040*
-1= =(!
-
-1074547*
-1A A(
-
-10711020*
-1@ @(
-
-10711021*
-1@ @(
-
-1074521*
-1A A(
-
-1075720*
-1A1 A(2
-
-1075721*
-1A2 A(>
-
-1075921*
-1B B(
-
-1075947*
-1BA B(O
-
-1073141*
-1BA B(O
-
-1076140*
-1BP B(^
-
-1072641*
-1BA B(O
-
-1073121*
-1BA B(O
-
-1072641*
-1BA B(O
-
-1074547*
-1D D("
-
-1076341*
-1D D("
-
-1076540*
-1D. D(3
-
-1076347*
-1D D("
-
-1074541*
-1D D("
-
-1076740*
-1D# D(+
-
-1073141*
-1F	 F(
-
-10711240*
-1F F(.
-
-1071021*
-1F	 F(
-
-1071041*
-1F	 F(
-
-1073121*
-1F F(
-
-1072641*
-1F F(
-
-1074547*
-1H H(
-
-1076341*
-1H H(
-
-1076540*
-1H$ H()
-
-1077847*
-1H H(
-
-1074541*
-1H H(
-
-10711440*
-1H H(!

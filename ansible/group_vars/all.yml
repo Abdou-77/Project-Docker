@@ -3,14 +3,14 @@
 # Override these values according to your environment
 
 # Docker Hub username (IMPORTANT: Replace with your actual username)
-dockerhub_username: abdallahsofi
+dockerhub_username: abdou775
 
 # Network configuration
 docker_network_name: app-network
 
 # Database configuration
 database_container_name: database
-database_image: postgres:14-alpine
+database_image: "{{ dockerhub_username }}/tp-devops-simple-api-database:latest"
 database_volume: db-data
 postgres_db: db
 postgres_user: usr

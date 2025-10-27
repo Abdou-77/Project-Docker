@@ -1,22 +1,0 @@
-
-Lfr.takima.training.simpleapi.service.StudentService#getAll()Ljava/util/List;{
-q/Users/abdallahsofi/Project-Docker/backend/src/main/java/fr/takima/training/simpleapi/service/StudentService.java ("1*³
-1 («
-¨
- (1
-%0+fr.takima.training.simpleapi.dao.StudentDAO"__id*c
-
-__unknown_file (G*E5
-3fr.takima.training.simpleapi.service.StudentService"
-
-studentDAOÑÎ
- (#
-%1java.util.List"Porg.springframework.data.repository.ListCrudRepository#findAll()Ljava/util/List;*O
-
-__unknown_file (3
-1
-%0+fr.takima.training.simpleapi.dao.StudentDAO2	findAll()""
- ($
-
-%1java.util.ListB75
-3fr.takima.training.simpleapi.service.StudentServiceH

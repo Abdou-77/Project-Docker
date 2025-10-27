@@ -1,8 +1,0 @@
-organization=ansible-course
-projectKey=ansible-course_ansible-course
-serverUrl=https://sonarcloud.io
-serverVersion=8.0.0.69194
-branch=main
-dashboardUrl=https://sonarcloud.io/dashboard?id=ansible-course_ansible-course&branch=main&resolved=false
-ceTaskId=AZolEQ7VzpGl9EYxqHop
-ceTaskUrl=https://sonarcloud.io/api/ce/task?id=AZolEQ7VzpGl9EYxqHop
