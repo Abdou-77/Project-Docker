@@ -4,67 +4,62 @@ name: CI devops 2025
 
 on:
   push:
-    branches: [ main, develop ]     # Exécution sur push vers main ou develop
+    branches: [ main, develop ]
   pull_request:
-    branches: [ main, develop ]     # Exécution sur pull request vers main ou develop
+    branches: [ main, develop ]
 
 jobs:
-  # -------------------------------------------------
-  # Étape 1 : Test du backend Java avec Maven + SonarCloud
-  # -------------------------------------------------
   test-backend:
-    runs-on: ubuntu-24.04           # Machine virtuelle Ubuntu
+    runs-on: ubuntu-24.04
 
     steps:
-      - uses: actions/checkout@v4   # Récupère le code du dépôt
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Shallow clones should be disabled for better SonarCloud analysis
 
       - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
-          java-version: '21'        # Installe Java 21
+          java-version: '21'
           distribution: 'temurin'
-
-      - name: Debug Java Maven environment
-        run: |
-          echo "--- java version ---"
-          java -version || true
-          echo "--- mvn version ---"
-          mvn -v || true
-          echo "--- list backend dir ---"
-          ls -la backend || true
-        shell: bash
+          cache: maven
 
       - name: Build and test with Maven
         run: mvn -B -f backend/pom.xml clean verify
-        shell: bash
 
-      # SonarCloud analysis (skips if required secrets are not set)
-      - name: Run SonarCloud analysis if configured
+      - name: Cache SonarCloud packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+
+      - name: Analyze with SonarCloud
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         working-directory: backend
         run: |
-          echo "Checking SonarCloud configuration..."
-          if [ -z "${{ secrets.SONAR_TOKEN }}" ] || [ -z "${{ secrets.SONAR_PROJECT_KEY }}" ]; then
-            echo "Skipping SonarCloud analysis because SONAR_TOKEN or SONAR_PROJECT_KEY is not set."
-            exit 0
+          if [ -z "$SONAR_TOKEN" ]; then
+            echo "⚠️  Skipping SonarCloud analysis: SONAR_TOKEN not set"
+            echo "   Add it in Settings > Secrets and variables > Actions"
+          else
+            echo "🔍 Running SonarCloud analysis..."
+            mvn -B sonar:sonar \
+              -Dsonar.projectKey=ansible-course_ansible-course \
+              -Dsonar.organization=ansible-course \
+              -Dsonar.host.url=https://sonarcloud.io
           fi
-          echo "Running SonarCloud analysis for project key: ${{ secrets.SONAR_PROJECT_KEY }}"
-          mvn -B sonar:sonar -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }} -Dsonar.organization=ansible-course -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=${{ secrets.SONAR_TOKEN }}
-        shell: bash
 
-
-
-  # -------------------------------------------------
-  # Étape 2 : Build et push des images Docker
-  # -------------------------------------------------
   build-and-push-docker-image:
-    needs: test-backend              # S’exécute uniquement si les tests passent
+    needs: test-backend
     runs-on: ubuntu-24.04
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # Prepare Docker username for tagging (prefer DOCKERHUB_USERNAME)
       - name: Prepare Docker username
         run: |
           echo "Preparing Docker username"
@@ -72,56 +67,37 @@ jobs:
             echo "DOCKER_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}" >> $GITHUB_ENV
             echo "Using DOCKERHUB_USERNAME secret"
           elif [ -n "${{ secrets.SECRET_EMAIL }}" ]; then
-            # Check if SECRET_EMAIL contains an '@' (invalid for Docker username/tag)
             if echo "${{ secrets.SECRET_EMAIL }}" | grep -q '@'; then
               echo "ERROR: SECRET_EMAIL contains '@' — please set DOCKERHUB_USERNAME instead."
               exit 1
             else
               echo "DOCKER_USERNAME=${{ secrets.SECRET_EMAIL }}" >> $GITHUB_ENV
-              echo "Using SECRET_EMAIL as Docker username (no @ present)"
+              echo "Using SECRET_EMAIL as Docker username"
             fi
           else
-            echo "ERROR: Set repository secret DOCKERHUB_USERNAME (preferred). If you must use SECRET_EMAIL, ensure it contains a Docker username (no '@')."
+            echo "ERROR: Set repository secret DOCKERHUB_USERNAME"
             exit 1
           fi
-        shell: bash
 
-      # Validate that required secrets exist before attempting login
       - name: Validate Docker credentials
         run: |
           echo "Validating Docker credentials"
           if [ -z "${{ secrets.SECRET_EMAIL }}" ] && [ -z "${{ secrets.DOCKERHUB_USERNAME }}" ]; then
-            echo "ERROR: Repository secret SECRET_EMAIL or DOCKERHUB_USERNAME is not set. Add one in Settings > Secrets and variables > Actions"
+            echo "ERROR: Repository secret SECRET_EMAIL or DOCKERHUB_USERNAME is not set"
             exit 1
           fi
           if [ -z "${{ secrets.SECRET_TOKEN }}" ] && [ -z "${{ secrets.SECRET_PASSWORD }}" ]; then
-            echo "ERROR: Neither SECRET_TOKEN nor SECRET_PASSWORD is set. Add one of them in Settings > Secrets and variables > Actions"
+            echo "ERROR: Neither SECRET_TOKEN nor SECRET_PASSWORD is set"
             exit 1
           fi
           echo "Docker credentials validated"
-        shell: bash
 
-      # Debug step — n'affiche pas les valeurs sensibles, seulement la présence
-      - name: Debug - check secrets presence
-        run: |
-          echo "DOCKERHUB_USERNAME: $( [ -n "${{ secrets.DOCKERHUB_USERNAME }}" ] && echo present || echo missing )"
-          echo "SECRET_EMAIL: $( [ -n "${{ secrets.SECRET_EMAIL }}" ] && echo present || echo missing )"
-          echo "SECRET_TOKEN: $( [ -n "${{ secrets.SECRET_TOKEN }}" ] && echo present || echo missing )"
-          echo "SECRET_PASSWORD: $( [ -n "${{ secrets.SECRET_PASSWORD }}" ] && echo present || echo missing )"
-          echo "DOCKER_USERNAME (env): $( [ -n "$DOCKER_USERNAME" ] && echo present || echo missing )"
-        shell: bash
-
-      # Connexion sécurisée à Docker Hub (ou ECR si détecté)
       - name: Log in to Docker registry
         uses: docker/login-action@v2
         with:
-          # Use DOCKERHUB_USERNAME if present, otherwise fallback to SECRET_EMAIL
           username: ${{ secrets.DOCKERHUB_USERNAME || secrets.SECRET_EMAIL }}
           password: ${{ secrets.SECRET_TOKEN || secrets.SECRET_PASSWORD }}
-          ecr: auto
-          logout: true
 
-      # Build et push de l’image backend
       - name: Build image and push backend
         uses: docker/build-push-action@v6
         with:
@@ -129,7 +105,6 @@ jobs:
           push: true
           tags: ${{ env.DOCKER_USERNAME }}/tp-devops-simple-api-backend:latest
 
-      # Build et push de l’image base de données
       - name: Build image and push database
         uses: docker/build-push-action@v6
         with:
@@ -137,11 +112,9 @@ jobs:
           push: true
           tags: ${{ env.DOCKER_USERNAME }}/tp-devops-simple-api-database:latest
 
-      # Build et push de l’image httpd
       - name: Build image and push httpd
         uses: docker/build-push-action@v6
         with:
           context: ./httpd
           push: true
           tags: ${{ env.DOCKER_USERNAME }}/tp-devops-simple-api-httpd:latest
-
