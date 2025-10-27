@@ -32,12 +32,12 @@ jobs:
       - name: Run SonarCloud analysis
         working-directory: backend
         run: |
-          mvn -B verify sonar:sonar \
-            -Dsonar.projectKey=ansible-course_simple-api \
-            -Dsonar.organization=ansible-course \
-            -Dsonar.host.url=https://sonarcloud.io \
-            -Dsonar.login=${{ secrets.SONAR_TOKEN }} \
-            -Dsonar.branch.name=main
+          mvn -B 
+          verify sonar:sonar -Dsonar.projectKey=ansible-course_ansible-course
+          -Dsonar.organization=ansible-course
+          -Dsonar.host.url=https://sonarcloud.io 
+          -Dsonar.login=${{ secrets.SONAR_TOKEN }}  
+          --file ./backend/pom.xml
         shell: bash
 
 
