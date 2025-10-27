@@ -91,8 +91,8 @@ docker network inspect app-network
 | Nom | Image | Port | Réseau | Variables Env |
 |-----|-------|------|--------|---------------|
 | database | postgres:14-alpine | 5432 | app-network | POSTGRES_DB, POSTGRES_USER, POSTGRES_PASSWORD |
-| backend | {username}/tp-devops-simple-api-backend:latest | 8080 | app-network | SPRING_DATASOURCE_* |
-| httpd | {username}/tp-devops-simple-api-httpd:latest | 80 | app-network | - |
+| backend | abdallahsofi/tp-devops-simple-api-backend:latest | 8080 | app-network | SPRING_DATASOURCE_* |
+| httpd | abdallahsofi/tp-devops-simple-api-httpd:latest | 80 | app-network | - |
 
 ## 🔑 Points Clés Implémentés
 
@@ -104,4 +104,3 @@ docker network inspect app-network
 ✅ Restart policy `always` pour tous les conteneurs  
 
 Votre application est maintenant prête à être déployée ! 🎉
-
