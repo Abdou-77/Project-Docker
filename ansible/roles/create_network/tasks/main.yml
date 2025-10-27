@@ -1,0 +1,11 @@
+---
+# Role: create_network - Create Docker network
+
+- name: Create Docker network
+  docker_network:
+    name: "{{ docker_network_name }}"
+    driver: bridge
+    state: present
+  vars:
+    ansible_python_interpreter: /opt/docker_venv/bin/python
+

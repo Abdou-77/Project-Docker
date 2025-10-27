@@ -1,0 +1,25 @@
+---
+# Global variables for the application deployment
+# Override these values according to your environment
+
+# Docker Hub username (IMPORTANT: Replace with your actual username)
+dockerhub_username: abdallahsofi
+
+# Network configuration
+docker_network_name: app-network
+
+# Database configuration
+database_container_name: database
+database_image: postgres:14-alpine
+database_volume: db-data
+postgres_db: db
+postgres_user: usr
+postgres_password: pwd
+
+# Backend application configuration
+app_container_name: backend
+app_image: "{{ dockerhub_username }}/tp-devops-simple-api-backend:latest"
+
+# Proxy configuration
+proxy_container_name: httpd
+proxy_image: "{{ dockerhub_username }}/tp-devops-simple-api-httpd:latest"

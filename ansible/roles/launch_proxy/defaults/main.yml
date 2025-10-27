@@ -1,0 +1,6 @@
+---
+# Default variables for launch_proxy role
+docker_network_name: app-network
+proxy_container_name: httpd
+proxy_image: your-dockerhub-username/tp-devops-simple-api-httpd:latest
+

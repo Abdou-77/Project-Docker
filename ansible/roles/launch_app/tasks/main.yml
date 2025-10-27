@@ -1,0 +1,20 @@
+---
+# Role: launch_app - Launch backend application container
+
+- name: Run backend application container
+  docker_container:
+    name: "{{ app_container_name }}"
+    image: "{{ app_image }}"
+    state: started
+    restart_policy: always
+    networks:
+      - name: "{{ docker_network_name }}"
+    env:
+      SPRING_DATASOURCE_URL: "jdbc:postgresql://{{ database_container_name }}:5432/{{ postgres_db }}"
+      SPRING_DATASOURCE_USERNAME: "{{ postgres_user }}"
+      SPRING_DATASOURCE_PASSWORD: "{{ postgres_password }}"
+    ports:
+      - "8080:8080"
+  vars:
+    ansible_python_interpreter: /opt/docker_venv/bin/python
+

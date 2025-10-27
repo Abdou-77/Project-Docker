@@ -1,0 +1,4 @@
+---
+# Default variables for create_network role
+docker_network_name: app-network
+

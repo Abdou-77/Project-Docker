@@ -1,0 +1,16 @@
+---
+# Role: launch_proxy - Launch HTTPD proxy container
+
+- name: Run HTTPD
+  docker_container:
+    name: "{{ proxy_container_name }}"
+    image: "{{ proxy_image }}"
+    state: started
+    restart_policy: always
+    networks:
+      - name: "{{ docker_network_name }}"
+    ports:
+      - "80:80"
+  vars:
+    ansible_python_interpreter: /opt/docker_venv/bin/python
+

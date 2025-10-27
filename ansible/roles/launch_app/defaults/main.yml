@@ -1,0 +1,10 @@
+---
+# Default variables for launch_app role
+docker_network_name: app-network
+app_container_name: backend
+app_image: your-dockerhub-username/tp-devops-simple-api-backend:latest
+database_container_name: database
+postgres_db: db
+postgres_user: usr
+postgres_password: pwd
+
