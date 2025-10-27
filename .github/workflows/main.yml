@@ -28,16 +28,17 @@ jobs:
         run: mvn clean verify        # Compile et lance les tests
         working-directory: backend   # Le pom.xml est dans le dossier backend
 
-      # SonarCloud analysis (runs only if secrets are provided)
-      - name: Run SonarCloud analysis
-        if: ${{ secrets.SONAR_TOKEN != '' && secrets.SONAR_PROJECT_KEY != '' }}
+      # SonarCloud analysis (skips if required secrets are not set)
+      - name: Run SonarCloud analysis if configured
         working-directory: backend
-        run: mvn -B sonar:sonar -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }} -Dsonar.organization=ansible-course -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=${{ secrets.SONAR_TOKEN }}
-        shell: bash
-
-      - name: Skip SonarCloud analysis if secrets missing
-        if: ${{ secrets.SONAR_TOKEN == '' || secrets.SONAR_PROJECT_KEY == '' }}
-        run: echo "Skipping SonarCloud analysis because SONAR_TOKEN or SONAR_PROJECT_KEY is not set."
+        run: |
+          echo "Checking SonarCloud configuration..."
+          if [ -z "${{ secrets.SONAR_TOKEN }}" ] || [ -z "${{ secrets.SONAR_PROJECT_KEY }}" ]; then
+            echo "Skipping SonarCloud analysis because SONAR_TOKEN or SONAR_PROJECT_KEY is not set."
+            exit 0
+          fi
+          echo "Running SonarCloud analysis for project key: ${{ secrets.SONAR_PROJECT_KEY }}"
+          mvn -B sonar:sonar -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }} -Dsonar.organization=ansible-course -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=${{ secrets.SONAR_TOKEN }}
         shell: bash
 
 
