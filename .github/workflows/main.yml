@@ -28,6 +28,11 @@ jobs:
         run: mvn clean verify        # Compile et lance les tests
         working-directory: backend   # Le pom.xml est dans le dossier backend
 
+      # Run SonarCloud analysis (requires secret SONAR_TOKEN)
+      - name: Run SonarCloud analysis
+        run: mvn -B verify sonar:sonar -Dsonar.projectKey=Project-Docker -Dsonar.organization=ansible-course -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=${{ secrets.SONAR_TOKEN }} --file ./backend/pom.xml
+        shell: bash
+
 
   # -------------------------------------------------
   # Étape 2 : Build et push des images Docker
