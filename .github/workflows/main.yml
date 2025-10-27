@@ -41,16 +41,11 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         working-directory: backend
         run: |
-          if [ -z "$SONAR_TOKEN" ]; then
-            echo "⚠️  Skipping SonarCloud analysis: SONAR_TOKEN not set"
-            echo "   Add it in Settings > Secrets and variables > Actions"
-          else
-            echo "🔍 Running SonarCloud analysis..."
-            mvn -B sonar:sonar \
-              -Dsonar.projectKey=ansible-course_ansible-course \
-              -Dsonar.organization=ansible-course \
-              -Dsonar.host.url=https://sonarcloud.io
-          fi
+          echo "🔍 Running SonarCloud analysis..."
+          mvn -B sonar:sonar \
+            -Dsonar.projectKey=ansible-course_ansible-course \
+            -Dsonar.organization=ansible-course \
+            -Dsonar.host.url=https://sonarcloud.io
 
   build-and-push-docker-image:
     needs: test-backend
