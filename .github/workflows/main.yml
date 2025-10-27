@@ -24,20 +24,31 @@ jobs:
           java-version: '21'        # Installe Java 21
           distribution: 'temurin'
 
-      - name: Build and test with Maven
-        run: mvn clean verify        # Compile et lance les tests
-        working-directory: backend   # Le pom.xml est dans le dossier backend
+      - name: Debug Java Maven environment
+        run: |
+          echo "--- java version ---"
+          java -version || true
+          echo "--- mvn version ---"
+          mvn -v || true
+          echo "--- list backend dir ---"
+          ls -la backend || true
+        shell: bash
 
-      # ✅ SonarCloud analysis (corrected)
-      - name: Run SonarCloud analysis
+      - name: Build and test with Maven
+        run: mvn -B -f backend/pom.xml clean verify
+        shell: bash
+
+      # SonarCloud analysis (skips if required secrets are not set)
+      - name: Run SonarCloud analysis if configured
         working-directory: backend
         run: |
-          mvn -B 
-          verify sonar:sonar -Dsonar.projectKey=ansible-course_ansible-course
-          -Dsonar.organization=ansible-course
-          -Dsonar.host.url=https://sonarcloud.io 
-          -Dsonar.login=${{ secrets.SONAR_TOKEN }}  
-          --file ./backend/pom.xml
+          echo "Checking SonarCloud configuration..."
+          if [ -z "${{ secrets.SONAR_TOKEN }}" ] || [ -z "${{ secrets.SONAR_PROJECT_KEY }}" ]; then
+            echo "Skipping SonarCloud analysis because SONAR_TOKEN or SONAR_PROJECT_KEY is not set."
+            exit 0
+          fi
+          echo "Running SonarCloud analysis for project key: ${{ secrets.SONAR_PROJECT_KEY }}"
+          mvn -B sonar:sonar -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }} -Dsonar.organization=ansible-course -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=${{ secrets.SONAR_TOKEN }}
         shell: bash
 
 
@@ -133,3 +144,4 @@ jobs:
           context: ./httpd
           push: true
           tags: ${{ env.DOCKER_USERNAME }}/tp-devops-simple-api-httpd:latest
+
